@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\outlet;
+use App\Outlet;
 use Illuminate\Http\Request;
-use Validator;
 
 class OutletController extends Controller
 {
@@ -15,26 +14,13 @@ class OutletController extends Controller
      */
     public function index()
     {
+
         $outlet = Outlet::all();
-        return view('outlet.index', compact('outlet'));
-    }
 
-    public function data(){
-        $outlet = Outlet::orderBy('id', 'desc')->get();
-
-        return datatables()
-        ->of($outlet)
-        ->addIndexColumn()
-        ->addColumn('aksi', function($outlet){
-            return'
-            <div class="btn-group">
-                <button onclick="editData(`'.route('outlet.update', $outlet->id).'`)" class="btn btn-flat btn-xs btn-warning"><i class="fa fa-edit"></i></button>
-                <button onclick="deleteData(`'.route('outlet.destroy', $outlet->id).'`)" class="btn btn-flat btn-xs btn-danger"><i class="fa fa-trash"></i></button>
-            </div>
-            ';
-        })
-        ->rawColumns(['aksi'])
-        ->make(true);
+        return view('outlet.list', [
+            'title' => 'Data Outlet',
+            'outlet' => $outlet
+        ]);
     }
 
     /**
@@ -44,7 +30,9 @@ class OutletController extends Controller
      */
     public function create()
     {
-        return view('outlet.form');
+        return view('outlet.create', [
+            'title' => 'New Outlet',
+        ]);
     }
 
     /**
@@ -55,75 +43,69 @@ class OutletController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'nama' => 'required|alpha',
-            'alamat' => 'required',
-            'telepon' => 'required|numeric'
+        Outlet::create([
+            'nama' => $request->nama,
+            'alamat' => $request->alamat,
+            'no_telp' => $request->no_telp,
         ]);
 
-       $outlet = Outlet::create([
-        'nama' => $request->nama,
-        'alamat' => $request->alamat,
-        'telepon' => $request->telepon
-       ]);
-
-       return response()->json([
-        'success' => true,
-        'massage' => 'Data berhasil disimpan',
-        'data' => $outlet
-       ]);
+        return redirect()->route('outlet.index')->with('message', 'Outlet added successfully!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\outlet  $outlet
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $outlet = Outlet::find($id);
-        return response()->json($outlet);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\outlet  $outlet
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Outlet $outlet)
     {
-        $outlet = Outlet::find($id);
-        return view('outlet.form', compact('outlet'));
+        return view('outlet.edit', [
+            'title' => 'Edit Outlet',
+            'outlet' => $outlet
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\outlet  $outlet
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
+        $data = $request->all();
+
         $outlet = Outlet::find($id);
-        $outlet->nama = $request->nama;
-        $outlet->alamat = $request->alamat;
-        $outlet->telepon = $request->telepon;
-        $outlet->update();
-        return response()->json('Data berhasil disimpan');
+        $outlet->update($data);
+
+        return redirect()->route('outlet.index')->with('message', 'outlet updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\outlet  $outlet
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $outlet = Outlet::find($id);
-        $outlet->delete();
+        $id = Outlet::find($id);
+        $id->delete();
+
+
+        return redirect()->route('outlet.index')->with('message', 'Outlet deleted successfully!');
     }
 }

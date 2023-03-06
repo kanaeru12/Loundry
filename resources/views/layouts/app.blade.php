@@ -1,97 +1,83 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>@yield('title')</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- General CSS Files -->
-  <link rel="stylesheet" href="{{asset('assets/modules/bootstrap/css/bootstrap.min.css')}}">
-  <link rel="stylesheet" href="{{asset('assets/modules/fontawesome/css/all.min.css')}}">
-    <link rel="stylesheet" href="{{asset('assets/modules/izitoast/css/iziToast.min.css')}}">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
- {{-- Data Tables --}}
- <link rel="stylesheet" href="{{ asset('datatable/dataTables.bootstrap4.min.css') }}">
- <link rel="stylesheet" href="{{ asset('datatable/responsive.bootstrap4.min.css') }}">
- <link rel="stylesheet" href="{{ asset('datatable/buttons.bootstrap4.min.css') }}">
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
- {{-- Font Awsome --}}
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.5.0/css/all.min.css" 
- integrity="sha512-QfDd74mlg8afgSqm3Vq2Q65e9b3xMhJB4GZ9OcHDVy1hZ6pqBJPWWnMsKDXM7NINoKqJANNGBuVRIpIJ5dogfA==" 
- crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
 
-  <!-- Template CSS -->
-  <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
-  <link rel="stylesheet" href="{{asset('assets/css/components.css')}}">
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
-<!-- Start GA -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script>
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-
 <body>
-  <div id="app">
-    <div class="main-wrapper main-wrapper-1">
-      @include('layouts.navbar')
-      @include('layouts.sidebar')
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    {{ config('app.name', 'Laravel') }}
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-      <!-- Main Content -->
-      <div class="main-content">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto">
 
-         @yield('content')
+                    </ul>
 
-      </div>
-      @include('layouts.footer')
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            </li>
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-4">
+            @yield('content')
+        </main>
     </div>
-  </div>
-
-  <!-- General JS Scripts -->
-  <script src="{{asset('assets/modules/jquery.min.js')}}"></script>
-  <script src="{{asset('assets/modules/popper.js')}}"></script>
-  <script src="{{asset('assets/modules/tooltip.js')}}"></script>
-  <script src="{{asset('assets/modules/bootstrap/js/bootstrap.min.js')}}"></script>
-  <script src="{{asset('assets/modules/nicescroll/jquery.nicescroll.min.js')}}"></script>
-  <script src="{{asset('assets/modules/moment.min.js')}}"></script>
-  <script src="{{asset('assets/js/stisla.js')}}"></script>
-  
-  {{-- IziToast --}}
- <script src="{{asset('assets/modules/izitoast/js/iziToast.min.js')}}"></script>
-  
-  <!-- JS Libraies -->
-
-  {{-- DataTables --}}
-<script src="{{ asset('datatable/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datatable/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('datatable/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('datatable/responsive.bootstrap4.min.js') }}"></script>
-
-  <!-- Page Specific JS File -->
-  
-  {{-- SweetAlert --}}
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>  
-  
-  <!-- Template JS File -->
-  <script src="{{asset('assets/js/scripts.js')}}"></script>
-  <script src="{{asset('assets/js/custom.js')}}"></script>
-
-  @stack('script')
-
-  <script>
-    @if(session()->has('sukses'))
-    iziToast.success({
-      title: 'sukses',
-      message: '{{session('sukses')}}',
-      position: 'topRight'
-    });
-    @elseif(session()->has('error'))
-    iziToast.error({
-      title: 'Hello, world!',
-      message: '{{session('error')}}',
-      position: 'topRight'
-    });
-    @endif
-  </script>
 </body>
 </html>

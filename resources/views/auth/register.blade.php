@@ -1,97 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Register</title>
+@extends('layouts.auth')
 
-  <!-- General CSS Files -->
-  <link rel="stylesheet" href="{{asset('assets/modules/bootstrap/css/bootstrap.min.css')}}">
-  <link rel="stylesheet" href="{{asset('assets/modules/fontawesome/css/all.min.css')}}">
+@section('main-content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                    <div class="row">
+                        <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                        <div class="col-lg-6">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">{{ __('Register') }}</h1>
+                                </div>
 
-  <!-- CSS Libraries -->
-  <link rel="stylesheet" href="{{asset('assets/modules/jquery-selectric/selectric.css')}}">
+                                @if ($errors->any())
+                                    <div class="alert alert-danger border-left-danger" role="alert">
+                                        <ul class="pl-4 my-2">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
 
-  <!-- Template CSS -->
-  <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
-  <link rel="stylesheet" href="{{asset('assets/css/components.css')}}">
-<!-- Start GA -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script>
-</head>
+                                <form method="POST" action="{{ route('register') }}" class="user">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-<body>
-  <div id="app">
-    <section class="section">
-      <div class="container mt-5">
-        <div class="row">
-          <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-user" name="name" placeholder="{{ __('Name') }}" value="{{ old('name') }}" required autofocus>
+                                    </div>
 
-            <div class="card card-primary">
-              <div class="card-header"><h4>Register</h4></div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-user" name="last_name" placeholder="{{ __('Last Name') }}" value="{{ old('last_name') }}" required>
+                                    </div>
 
-              <div class="card-body">
-                <form method="POST">
-                  <div class="form-group col-12">
-                    <label for="nama">Nama</label>
-                    <input id="nama" name="nama" type="text" class="form-control" name="frist_name" autofocus>
-                  </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-user" name="email" placeholder="{{ __('E-Mail Address') }}" value="{{ old('email') }}" required>
+                                    </div>
 
-                  <div class="form-group col-12">
-                    <label for="email">Email</label>
-                    <input id="email" type="email" class="form-control" name="email">
-                    <div class="invalid-feedback">
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user" name="password" placeholder="{{ __('Password') }}" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user" name="password_confirmation" placeholder="{{ __('Confirm Password') }}" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                                            {{ __('Register') }}
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <hr>
+
+                                <div class="text-center">
+                                    <a class="small" href="{{ route('login') }}">
+                                        {{ __('Already have an account? Login!') }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-
-
-                    <div class="form-group col-12">
-                      <label for="password" class="d-block">Password</label>
-                      <input id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" name="password">
-                      <div id="pwindicator" class="pwindicator">
-                        <div class="bar"></div>
-                        <div class="label"></div>
-                      </div>
-                    </div>
-
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">
-                      Register
-                    </button>
-                  </div>
-
-                  <div class="text-center">
-                    <a href="/">Batal</a>
-                  </div>
-                </form>
-              </div>
+                </div>
             </div>
-            <div class="simple-footer">
-              Copyright &copy; Achell {{ date('Y') }}
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- General JS Scripts -->
-  <script src="{{asset('assets/modules/jquery.min.js')}}"></script>
-  <script src="{{asset('assets/modules/popper.js')}}"></script>
-  <script src="{{asset('assets/modules/tooltip.js')}}"></script>
-  <script src="{{asset('assets/modules/bootstrap/js/bootstrap.min.js')}}"></script>
-  <script src="{{asset('assets/modules/nicescroll/jquery.nicescroll.min.js')}}"></script>
-  <script src="{{asset('assets/modules/moment.min.js')}}"></script>
-  <script src="{{asset('assets/js/stisla.js')}}"></script>
-  
-  <!-- JS Libraies -->
-  <script src="{{asset('assets/modules/jquery-pwstrength/jquery.pwstrength.min.js')}}"></script>
-  <script src="{{asset('assets/modules/jquery-selectric/jquery.selectric.min.js')}}"></script>
-
-  <!-- Page Specific JS File -->
-  <script src="{{asset('assets/js/page/auth-register.js')}}"></script>
-  
-  <!-- Template JS File -->
-  <script src="{{asset('assets/js/scripts.js')}}"></script>
-  <script src="{{asset('assets/js/custom.js')}}"></script>
-</body>
-</html>
+    </div>
+</div>
+@endsection

@@ -14,11 +14,19 @@ class CheckRole
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, ...$roles)
+    public function handle(Request $request, Closure $next, $role)
     {
-        if (in_array($request->user()->role, $roles)) {
-            return $next($request);
+
+        $roles = [
+            'admin' => ['admin'],
+            'owner' => ['owner'],
+            'kasir' => ['kasir', 'admin'],
+        ];
+
+        if(!in_array(auth()->user()->role, $roles[$role])){
+            return abort(403);
         }
-        return redirect(route('login'));
+
+        return $next($request);
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\member;
+use App\Member;
+use App\Outlet;
 use Illuminate\Http\Request;
-use Validator;
-
 
 class MemberController extends Controller
 {
@@ -16,28 +15,12 @@ class MemberController extends Controller
      */
     public function index()
     {
-        
-        $member = Member::all();
-        return view('member.index', compact('member'));
-    }
+         $member = Member::all();
 
-
-    public function data(){
-        $member = Member::orderBy('id', 'desc')->get();
-
-        return datatables()
-        ->of($member)
-        ->addIndexColumn()
-        ->addColumn('aksi', function($member){
-            return'
-            <div class="btn-group">
-                <button onclick="editData(`'.route('member.update', $member->id).'`)" class="btn btn-flat btn-xs btn-warning"><i class="fa fa-edit"></i></button>
-                <button onclick="deleteData(`'.route('member.destroy', $member->id).'`)" class="btn btn-flat btn-xs btn-danger"><i class="fa fa-trash"></i></button>
-            </div>
-            ';
-        })
-        ->rawColumns(['aksi'])
-        ->make(true);
+        return view('member.list', [
+            'title' => 'Data Membership',
+            'member' => $member
+        ]);
     }
 
     /**
@@ -47,7 +30,9 @@ class MemberController extends Controller
      */
     public function create()
     {
-        return view('member.form');
+        return view('member.create', [
+            'title' => 'New Membership',
+        ]);
     }
 
     /**
@@ -58,78 +43,80 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'nama' => 'required|alpha',
+        // Member::create([
+        //     'nama' => $request->nama,
+        //     'alamat' => $request->alamat,
+        //     'jenis_kelamin' => $request->jenis_kelamin,
+        //     'tlp' => $request->tlp,
+        // ]);
+
+        $this->validate($request , [
+            'nama' => 'required',
             'alamat' => 'required',
             'jenis_kelamin' => 'required',
-            'telepon' => 'required|numeric'
+            'tlp' => 'required'
+
         ]);
 
-       $member = Member::create([
-        'nama' => $request->nama,
-        'alamat' => $request->alamat,
-        'jenis_kelamin' => $request->jenis_kelamin,
-        'telepon' => $request->telepon
-       ]);
+        Member::create($request->all());
 
-       return response()->json([
-        'success' => true,
-        'massage' => 'Data berhasil disimpan',
-        'data' => $member
-       ]);
+        return redirect()->route('member.index')->with('message', 'Outlet added successfully!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\member  $member
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $member = Member::find($id);
-        return response()->json($member);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\member  $member
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Member $member)
     {
-        $member = Member::find($id);
-        return view('member.form', compact('member')); 
+        return view('member.edit', [
+            'title' => 'Edit Membership',
+            'member' => $member
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\member  $member
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
+        $data = $request->all();
+
         $member = Member::find($id);
-        $member->nama = $request->nama;
-        $member->alamat = $request->alamat;
-        $member->jenis_kelamin = $request->jenis_kelamin;
-        $member->telepon = $request->telepon;
-        $member->update();
-        return response()->json('Data berhasil disimpan');
+        $member->update($data);
+
+        return redirect()->route('member.index')->with('message', 'outlet updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\member  $member
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $member = Member::find($id);
-        $member->delete();
+        $id = Member::find($id);
+        $id->delete();
+
+
+        return redirect()->route('member.index')->with('message', 'Outlet deleted successfully!');
     }
 }
